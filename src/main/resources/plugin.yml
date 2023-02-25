@@ -1,0 +1,3 @@
+name: HypixelMigratorAddon
+version: '${project.version}'
+main: me.harsh.hypixelmigratoraddon.HypixelMigratorAddon
