@@ -1,5 +1,11 @@
 package me.harsh.hypixelmigratoraddon.utils;
 
+import de.marcely.bedwars.api.GameAPI;
+import de.marcely.bedwars.api.game.shop.ShopItem;
+import de.marcely.bedwars.api.game.shop.ShopPage;
+import org.bukkit.Material;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public enum ItemManager {
@@ -44,12 +50,39 @@ public enum ItemManager {
     }
 
     private final String materialName;
-
     public String getMaterialName() {
         return this.materialName;
     }
 
+    public Material getMaterial() {
+        return Material.matchMaterial(materialName);
+    }
+
     public static ItemManager findItem(String item) {
         return Arrays.<ItemManager>stream(values()).filter(layoutItem -> layoutItem.getMaterialName().equals(item)).findAny().orElse(null);
+    }
+
+    public static ShopItem[] getAllShopItems(String[] items){
+        final ArrayList<ShopItem> shopItems = new ArrayList<>();
+        for (String s : items) {
+            final ItemManager manager = ItemManager.findItem(s);
+            final ShopItem item = getShopItem(manager.getMaterial());
+            if (item == null) return null;
+            shopItems.add(item);
+        }
+        final ShopItem[] item = new ShopItem[shopItems.size()];
+        return shopItems.toArray(item);
+    }
+
+    public static ShopItem getShopItem(Material icon){
+        for (ShopPage shopPage : GameAPI.get().getShopPages()) {
+            if (shopPage == null) return null;
+            for (ShopItem item : shopPage.getItems()) {
+                if (item.getIcon().getType() == icon){
+                    return item;
+                }
+            }
+        }
+        return null;
     }
 }

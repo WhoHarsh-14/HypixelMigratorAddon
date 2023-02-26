@@ -48,10 +48,7 @@ public class MigrateManager {
             // TODO: Save all the items
             PlayerDataAPI.get().getProperties(player, playerProperties -> {
                 Utils.log("Items: " + items);
-                for (String s : items) {
-                    final ItemManager manager = ItemManager.findItem(s);
-                    playerProperties.setShopHypixelV2QuickBuyItems(null);
-                }
+                playerProperties.setShopHypixelV2QuickBuyItems(ItemManager.getAllShopItems(items));
             });
             Utils.tell(player, Config.MIGRATION_SUCCESS);
         });
