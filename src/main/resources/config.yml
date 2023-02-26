@@ -1,3 +1,16 @@
 # Hypixel migrator
 
 Hypixel-api: ""
+online-mode: true
+
+Migrate-item:
+  Item-icon: REDSTONE_BLOCK
+  Item-name: "&cHypixel layout"
+  Lore: ["", "&7Click here to", "&7Migrate your layout", "&7From hypixel"]
+
+Messages:
+  migration-success: "&a&lSuccess! &r&awe have migrated your layout ;)"
+  not-premium-player: "&cYou dont have official minecraft account!"
+  migration-started: "&aTrying to migrate your layout"
+  migration-failed: "&c&lFAILED &r&c Sorry migration failed"
+
