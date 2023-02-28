@@ -1,10 +1,15 @@
 package me.harsh.hypixelmigratoraddon.utils;
 
 
+import de.marcely.bedwars.api.GameAPI;
+import de.marcely.bedwars.api.game.shop.ShopItem;
+import de.marcely.bedwars.api.game.shop.ShopPage;
 import me.harsh.hypixelmigratoraddon.HypixelMigratorAddon;
 import me.harsh.hypixelmigratoraddon.config.Config;
 import me.harsh.hypixelmigratoraddon.manager.MigrateManager;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -13,8 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Utils {
+    private static MigrateManager manager;
+
     public static MigrateManager getManager(){
-        return new MigrateManager();
+        return manager;
     }
 
     public static void tell(Player player, String message){
@@ -43,5 +50,39 @@ public class Utils {
             colored.add(ChatColor.translateAlternateColorCodes('&', s));
         }
         return colored;
+    }
+
+    public static ShopItem[] getAllShopItems(String[] rawItems){
+        final ShopItem[] items = new ShopItem[rawItems.length];
+
+        for (int i=0; i<rawItems.length; i++) {
+            final ItemManager manager = ItemManager.matchItem(rawItems[i]);
+            if (manager == null)
+                continue;
+            final ShopItem item = getShopItem(manager.getMaterial());
+            if (item == null) {
+                items[i] = null;
+                continue;
+            }
+            items[i] = item;
+        }
+
+        return items;
+    }
+
+    public static ShopItem getShopItem(Material icon){
+        for (ShopPage shopPage : GameAPI.get().getShopPages()) {
+            if (shopPage == null) return null;
+            for (ShopItem item : shopPage.getItems()) {
+                if (item.getIcon().getType() == icon){
+                    return item;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static void setManager(MigrateManager manager) {
+        Utils.manager = manager;
     }
 }

@@ -2,10 +2,10 @@ package me.harsh.hypixelmigratoraddon.manager;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import de.marcely.bedwars.api.game.shop.ShopItem;
 import de.marcely.bedwars.api.player.PlayerDataAPI;
 import me.harsh.hypixelmigratoraddon.HypixelMigratorAddon;
 import me.harsh.hypixelmigratoraddon.config.Config;
-import me.harsh.hypixelmigratoraddon.utils.ItemManager;
 import me.harsh.hypixelmigratoraddon.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -43,32 +43,31 @@ public class MigrateManager {
                 Utils.tell(player, Config.MIGRATION_FAILED);
                 return;
             }
-            String layout = response.getAsJsonObject("player").getAsJsonObject("stats").getAsJsonObject("Bedwars").get("favourites_2").getAsString();
+            final String layout = response.getAsJsonObject("player").getAsJsonObject("stats").getAsJsonObject("Bedwars").get("favourites_2").getAsString();
             String[] items = layout.split(",");
-            // TODO: Save all the items
+            ShopItem[] shopItems = Utils.getAllShopItems(items);
             PlayerDataAPI.get().getProperties(player, playerProperties -> {
-                Utils.log("Items: " + items);
-                playerProperties.setShopHypixelV2QuickBuyItems(ItemManager.getAllShopItems(items));
+                playerProperties.setShopHypixelV2QuickBuyItems(shopItems);
             });
             Utils.tell(player, Config.MIGRATION_SUCCESS);
         });
     }
 
-    private void getHypixelTemplate(UUID uuid, Consumer<JsonObject> callback) {
+    private void getHypixelTemplate(UUID uuid, Consumer<JsonObject> response) {
         Bukkit.getScheduler().runTaskAsynchronously(HypixelMigratorAddon.getPlugin(), () -> {
             try {
-                URL url = new URL(String.format("https://api.hypixel.net/player?key=%s&uuid=%s", new Object[] { Config.HYPIXEL_API, uuid.toString() }));
-                HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setRequestProperty("Content-Type", "application/json");
-                if (connection.getResponseCode() == 200) {
-                    InputStreamReader reader = new InputStreamReader(connection.getInputStream());
-                    JsonObject json = (new JsonParser()).parse(reader).getAsJsonObject();
-                    callback.accept(json);
-                } else {
-                    callback.accept(null);
-                }
-                connection.disconnect();
+                final URL hypixelApi = new URL(String.format("https://api.hypixel.net/player?key=%s&uuid=%s", Config.HYPIXEL_API, uuid.toString()));
+                final HttpURLConnection httpURLConnection = (HttpURLConnection)hypixelApi.openConnection();
+                httpURLConnection.setRequestMethod("GET");
+                httpURLConnection.setRequestProperty("Content-Type", "application/json");
+                if (httpURLConnection.getResponseCode() == 200) {
+                    final InputStreamReader inputStreamReader = new InputStreamReader(httpURLConnection.getInputStream());
+                    final JsonObject json = (new JsonParser()).parse(inputStreamReader).getAsJsonObject();
+                    response.accept(json);
+                } else
+                    response.accept(null);
+                Utils.log("response code:- " + httpURLConnection.getResponseCode());
+                httpURLConnection.disconnect();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
