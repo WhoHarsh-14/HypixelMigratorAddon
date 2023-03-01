@@ -97,6 +97,10 @@
             <id>Hypixel</id>
             <url>https://repo.hypixel.net/repository/Hypixel/</url>
         </repository>
+        <repository>
+            <id>skullcreator-repo</id>
+            <url>https://github.com/deanveloper/SkullCreator/raw/mvn-repo/</url>
+        </repository>
     </repositories>
 
     <!--
@@ -114,17 +118,7 @@
         <dependency>
             <groupId>org.github.paperspigot</groupId>
             <artifactId>paperspigot-api</artifactId>
-
-            <!-- Change this to the latest version to stay up to date -->
             <version>1.8.8-R0.1-SNAPSHOT</version>
-
-            <!--
-               The scope indicates if this library should be packaged together with our plugin
-               when we want to publish it.
-
-               Set this to "compile" if you want all classes from this library to be copied
-               to your plugin's jar, otherwise set this to "provided".
-           -->
             <scope>provided</scope>
         </dependency>
 
@@ -132,7 +126,8 @@
             <groupId>de.marcely.bedwars</groupId>
             <artifactId>API</artifactId>
             <version>5.1.1</version>
-            <scope>provided</scope>
+            <scope>system</scope>
+            <systemPath>D:/Workspace/Plugins/bedwars.jar</systemPath>
         </dependency>
     </dependencies>
 

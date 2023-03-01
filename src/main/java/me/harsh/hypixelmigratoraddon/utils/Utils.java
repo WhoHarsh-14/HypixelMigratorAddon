@@ -13,6 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ public class Utils {
     }
 
     public static void tell(Player player, String message){
-        player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+        player.sendMessage(colorize(Config.PREFIX + " " + message));
     }
 
     public static void log(String message){
@@ -39,6 +40,12 @@ public class Utils {
         meta.setLore(colorize(Config.MIGRATE_ITEM_LORE));
         item.setItemMeta(meta);
         item.setAmount(1);
+        if (Config.MIGRATE_ITEM_IS_HEAD) {
+            final SkullMeta itemMeta = (SkullMeta) item.getItemMeta();
+            itemMeta.setOwner(Config.MIGRATE_HEAD_SKIN);
+            item.setItemMeta(meta);
+            return item;
+        }
         return item;
     }
     public static String colorize(String msg){
@@ -47,7 +54,7 @@ public class Utils {
     public static List<String> colorize(List<String> msg){
         final List<String> colored = new ArrayList<>();
         for (String s : msg) {
-            colored.add(ChatColor.translateAlternateColorCodes('&', s));
+            colored.add(colorize(s));
         }
         return colored;
     }
@@ -84,5 +91,11 @@ public class Utils {
 
     public static void setManager(MigrateManager manager) {
         Utils.manager = manager;
+    }
+
+    private static void notNull(Object o, String name) {
+        if (o == null) {
+            throw new NullPointerException(name + " should not be null!");
+        }
     }
 }

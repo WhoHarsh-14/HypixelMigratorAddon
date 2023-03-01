@@ -3,8 +3,15 @@
 Hypixel-api: ""
 online-mode: true
 
+Prefix: "&c[&aYourServerName&c]"
 Migrate-item:
+  # SKULL_ITEM :- in 1.8.8
+  # PLAYER_HEAD :- in 1.19
   Item-icon: REDSTONE_BLOCK
+  # If not using player head keep this false
+  player-head: false
+  player-head-skin: "hypixel"
+
   Item-name: "&cHypixel layout"
   Lore: ["", "&7Click here to", "&7Migrate your layout", "&7From hypixel"]
 
