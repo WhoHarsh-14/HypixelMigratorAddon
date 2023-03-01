@@ -34,7 +34,7 @@ public enum ItemManager {
     INVISIBILITY_POTION("invisibility_potion_(30_seconds)", Utils.getPotion("invis")),
     GOLDEN_APPLE("golden_apple", null),
     BEDBUG("bedbug", null),
-    DREAM_DEFENDER("dream_defender", XMaterial.IRON_GOLEM_SPAWN_EGG.parseItem()),
+    DREAM_DEFENDER("dream_defender", XMaterial.GHAST_SPAWN_EGG.parseItem()),
     FIREBALL("fireball", XMaterial.FIRE_CHARGE.parseItem()),
     TNT("tnt", null),
     ENDER_PEARL("ender_pearl", null),

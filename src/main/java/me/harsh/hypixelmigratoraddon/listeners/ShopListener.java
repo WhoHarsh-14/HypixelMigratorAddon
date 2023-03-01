@@ -13,10 +13,6 @@ public class ShopListener implements Listener {
     @EventHandler
     public void onOpen(ShopGUIPostProcessEvent event) {
         if (event.getGUI() == null) return;
-//        if (!isQuickShop(event.getPage())) {
-//            Utils.log("[!] Quick shop category item is not set properly/invalid please contact harsh/admin asap!");
-//            return;
-//        }
         if (event.getGUI() instanceof ChestGUI) {
             final ChestGUI gui = (ChestGUI) event.getGUI();
             if (gui == null) return;
@@ -28,7 +24,7 @@ public class ShopListener implements Listener {
             gui.setItem(new GUIItem(item, (player, leftClick, b1) -> {
                 Utils.getManager().migratePlayerLayout(player);
             }), 49);
-            event.getPlayer().closeInventory();
+            event.getGUI().closeAll();
         }
     }
 
