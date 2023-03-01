@@ -102,8 +102,8 @@
             <url>https://github.com/deanveloper/SkullCreator/raw/mvn-repo/</url>
         </repository>
         <repository>
-            <id>papermc</id>
-            <url>https://repo.papermc.io/repository/maven-public/</url>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
     </repositories>
 
@@ -119,18 +119,19 @@
 
            Make sure you change the version to the latest version you want to use for your plugin.
        -->
-        <dependency>
-            <groupId>org.github.paperspigot</groupId>
-            <artifactId>paperspigot-api</artifactId>
-            <version>1.8.8-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
 <!--        <dependency>-->
-<!--            <groupId>io.papermc.paper</groupId>-->
-<!--            <artifactId>paper-api</artifactId>-->
-<!--            <version>1.19.3-R0.1-SNAPSHOT</version>-->
+<!--            <groupId>org.github.paperspigot</groupId>-->
+<!--            <artifactId>paperspigot-api</artifactId>-->
+<!--            <version>1.8.8-R0.1-SNAPSHOT</version>-->
 <!--            <scope>provided</scope>-->
 <!--        </dependency>-->
+
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.13-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>de.marcely.bedwars</groupId>

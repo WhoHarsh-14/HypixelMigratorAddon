@@ -4,6 +4,9 @@ Hypixel-api: ""
 online-mode: true
 
 Prefix: "&c[&aYourServerName&c]"
+# The category item which you use (default: nether_star)
+Quick-shop-item: NETHER_STAR
+
 Migrate-item:
   # SKULL_ITEM :- in 1.8.8
   # PLAYER_HEAD :- in 1.19

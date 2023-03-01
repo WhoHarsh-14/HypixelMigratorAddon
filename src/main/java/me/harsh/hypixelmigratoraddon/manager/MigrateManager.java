@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -45,6 +46,7 @@ public class MigrateManager {
             }
             final String layout = response.getAsJsonObject("player").getAsJsonObject("stats").getAsJsonObject("Bedwars").get("favourites_2").getAsString();
             String[] items = layout.split(",");
+            Utils.log("Shop items are :- " + Arrays.toString(items));
             ShopItem[] shopItems = Utils.getAllShopItems(items);
             PlayerDataAPI.get().getProperties(player, playerProperties -> {
                 playerProperties.setShopHypixelV2QuickBuyItems(shopItems);

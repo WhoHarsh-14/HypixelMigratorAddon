@@ -14,13 +14,14 @@ public class Config {
     public static String MIGRATE_ITEM_NAME;
     public static boolean MIGRATE_ITEM_IS_HEAD;
     public static String MIGRATE_HEAD_SKIN;
-    public static Material MIGRATE_ITEM_ICON;
+    public static String MIGRATE_ITEM_ICON;
     public static List<String> MIGRATE_ITEM_LORE;
     public static String NOT_PREMIUM_USER;
     public static String MIGRATION_STARTED;
     public static String MIGRATION_FAILED;
     public static String MIGRATION_SUCCESS;
     public static String PREFIX;
+    public static String QUICK_SHOP_ITEM;
 
     public static void load(){
         HypixelMigratorAddon.getPlugin().saveDefaultConfig();
@@ -39,6 +40,7 @@ public class Config {
         ONLINE_MODE = get().getBoolean("online-mode");
         HYPIXEL_API = get().getString("Hypixel-api");
         PREFIX = get().getString("Prefix");
+        QUICK_SHOP_ITEM = get().getString("Quick-shop-item");
 
         // Messages
         NOT_PREMIUM_USER = Config.get().getString("Messages.not-premium-player");
@@ -49,8 +51,7 @@ public class Config {
 
         // Item
         final String icon = "Migrate-item.Item-icon";
-        final Optional<XMaterial> xMaterial = XMaterial.matchXMaterial(icon);
-        xMaterial.ifPresent(material -> MIGRATE_ITEM_ICON = material.parseMaterial());
+        MIGRATE_ITEM_ICON = get().getString(icon);
         MIGRATE_ITEM_IS_HEAD = get().getBoolean("Migrate-item.player-head");
         MIGRATE_HEAD_SKIN = get().getString("Migrate-item.player-head-skin");
         MIGRATE_ITEM_NAME = get().getString("Migrate-item.Item-name");
