@@ -4,15 +4,13 @@ Hypixel-api: ""
 online-mode: true
 
 Prefix: "&c[&aYourServerName&c]"
-# The category item which you use (default: nether_star)
-Quick-shop-item: NETHER_STAR
 
 Migrate-item:
   # SKULL_ITEM :- in 1.8.8
   # PLAYER_HEAD :- in 1.19
-  Item-icon: REDSTONE_BLOCK
+  Item-icon: PLAYER_HEAD
   # If not using player head keep this false
-  player-head: false
+  player-head: true
   player-head-skin: "hypixel"
 
   Item-name: "&cHypixel layout"
@@ -23,4 +21,5 @@ Messages:
   not-premium-player: "&cYou dont have official minecraft account!"
   migration-started: "&aTrying to migrate your layout"
   migration-failed: "&c&lFAILED &r&c Sorry migration failed"
+  migration-failed-no-perms: "&c&lFAILED &r&c Sorry you don't have permission to do that!"
 

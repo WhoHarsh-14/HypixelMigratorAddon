@@ -19,6 +19,7 @@ public class Config {
     public static String NOT_PREMIUM_USER;
     public static String MIGRATION_STARTED;
     public static String MIGRATION_FAILED;
+    public static String MIGRATION_FAILED_NO_PERM;
     public static String MIGRATION_SUCCESS;
     public static String PREFIX;
     public static String QUICK_SHOP_ITEM;
@@ -46,6 +47,7 @@ public class Config {
         NOT_PREMIUM_USER = Config.get().getString("Messages.not-premium-player");
         MIGRATION_STARTED = Config.get().getString("Messages.migration-started");
         MIGRATION_FAILED = Config.get().getString("Messages.migration-failed");
+        MIGRATION_FAILED_NO_PERM = Config.get().getString("Messages.migration-failed-no-perms");
         MIGRATION_SUCCESS = Config.get().getString("Messages.migration-success");
 
 

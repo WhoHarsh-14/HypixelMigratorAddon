@@ -3,6 +3,7 @@ package me.harsh.hypixelmigratoraddon.listeners;
 import de.marcely.bedwars.api.event.ShopGUIPostProcessEvent;
 import de.marcely.bedwars.tools.gui.GUIItem;
 import de.marcely.bedwars.tools.gui.type.ChestGUI;
+import me.harsh.hypixelmigratoraddon.config.Config;
 import me.harsh.hypixelmigratoraddon.utils.Utils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,6 +14,7 @@ public class ShopListener implements Listener {
     @EventHandler
     public void onOpen(ShopGUIPostProcessEvent event) {
         if (event.getGUI() == null) return;
+        if (event.getPage() != null) return;
         if (event.getGUI() instanceof ChestGUI) {
             final ChestGUI gui = (ChestGUI) event.getGUI();
             if (gui == null) return;
@@ -22,6 +24,11 @@ public class ShopListener implements Listener {
                 return;
             }
             gui.setItem(new GUIItem(item, (player, leftClick, b1) -> {
+                if (!player.hasPermission("migrator.use")){
+                    Utils.tell(player, Config.MIGRATION_FAILED_NO_PERM);
+                    event.getGUI().closeAll();
+                    return;
+                }
                 Utils.getManager().migratePlayerLayout(player);
             }), 49);
             event.getGUI().closeAll();
