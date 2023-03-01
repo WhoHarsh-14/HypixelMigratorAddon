@@ -5,7 +5,6 @@ import me.harsh.hypixelmigratoraddon.config.Config;
 import me.harsh.hypixelmigratoraddon.listeners.ShopListener;
 import me.harsh.hypixelmigratoraddon.manager.MigrateManager;
 import me.harsh.hypixelmigratoraddon.utils.Utils;
-import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class HypixelMigratorAddon extends JavaPlugin {
@@ -17,7 +16,7 @@ public class HypixelMigratorAddon extends JavaPlugin {
         Config.load();
         Utils.log("&a" + getPlugin().getName() + " has enabled!");
         registerEverything();
-         new Metrics(this, 17834);
+        new Metrics(this, 17834);
         new HypixelMigratorPluginAddon(this).register();
     }
 
