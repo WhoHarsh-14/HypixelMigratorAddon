@@ -95,19 +95,4 @@ public class MigrateManager {
             }
         });
     }
-    
-//            PlayerQuickBuyCache cache = PlayerQuickBuyCache.getQuickBuyCache(player.getUniqueId());
-//            Iterator<String> it = Arrays.<String>stream(items).iterator();
-//            for (int i = 19; i < 44; i++) {
-//                if (i != 26 && i != 27 && i != 35 && i != 36) {
-//                    String item = it.next();
-//                    if (item.equals("null")) {
-//                        cache.setElement(i, null);
-//                    } else {
-//                        String category = LayoutItem.matchItem(item).getCategory();
-//                        cache.setElement(i, (new QuickBuyElement(category, i)).getCategoryContent());
-//                    }
-//                }
-//            }
-//            cache.pushChangesToDB();
 }
