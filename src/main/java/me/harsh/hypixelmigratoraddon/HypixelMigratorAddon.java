@@ -10,6 +10,8 @@ import me.harsh.hypixelmigratoraddon.manager.MigrateManager;
 import me.harsh.hypixelmigratoraddon.utils.Utils;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.IOException;
+
 public class HypixelMigratorAddon extends JavaPlugin {
 
     private static HypixelMigratorAddon plugin;
@@ -18,7 +20,11 @@ public class HypixelMigratorAddon extends JavaPlugin {
     @Override
     public void onEnable() {
         plugin = this;
-        Config.load();
+        try {
+            Config.load();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         Utils.log("&a" + getPlugin().getName() + " has enabled!");
         registerEverything();
         new Metrics(this, 17834);
