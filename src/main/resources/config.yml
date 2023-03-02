@@ -1,7 +1,10 @@
 # Hypixel migrator
 
+# [/api new] in hypixel.net to get an api key
 Hypixel-api: ""
 online-mode: true
+# Time in seconds
+Delay: 15
 
 Prefix: "&c[&aYourServerName&c]"
 
@@ -22,4 +25,6 @@ Messages:
   migration-started: "&aTrying to migrate your layout"
   migration-failed: "&c&lFAILED &r&c Sorry migration failed"
   migration-failed-no-perms: "&c&lFAILED &r&c Sorry you don't have permission to do that!"
+  migration-delay: "&cSorry you have to wait another {time} seconds to do that!"
+  chat-migrate: "&aPlease type the name of any premium player in chat!"
 

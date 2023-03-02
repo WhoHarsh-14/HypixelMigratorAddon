@@ -8,17 +8,23 @@ import me.harsh.hypixelmigratoraddon.HypixelMigratorAddon;
 import me.harsh.hypixelmigratoraddon.config.Config;
 import me.harsh.hypixelmigratoraddon.utils.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
 public class MigrateManager {
+
+    private final HashMap<UUID, Long> migrateCoolDown = new HashMap<>();
+    private final List<UUID> migrateChat = new ArrayList<>();
     public void migratePlayerLayout(Player player) {
         if (Config.ONLINE_MODE) {
             applyPlayerMigratedLayout(player, player.getUniqueId());
@@ -31,6 +37,34 @@ public class MigrateManager {
                 }
             });
         }
+    }
+    public void migrateFromChat(OfflinePlayer p, Player player) {
+        getUuidFromWeb(p, uuid -> {
+            if (uuid == null) {
+                Utils.tell(player, Config.NOT_PREMIUM_USER);
+            } else {
+                applyPlayerMigratedLayout(player, uuid);
+            }
+        });
+    }
+
+
+    public HashMap<UUID, Long> getMigrateCoolDown() {
+        return migrateCoolDown;
+    }
+    public boolean isCooldownOver(Player player) {
+        if (!getMigrateCoolDown().containsKey(player.getUniqueId())) return false;
+        return System.currentTimeMillis() >= getMigrateCoolDown().get(player.getUniqueId());
+    }
+
+    public void addMigrateCoolDown(Player player){
+        if (!getMigrateCoolDown().containsKey(player.getUniqueId())) return;
+        migrateCoolDown.put(player.getUniqueId(), System.currentTimeMillis() + (1000L *Config.DELAY));
+    }
+
+    public void removeMigrateCoolDown(Player player){
+        if (!isCooldownOver(player)) return;
+        getMigrateCoolDown().remove(player.getUniqueId());
     }
 
     private void applyPlayerMigratedLayout(Player player, UUID uuid) {
@@ -75,7 +109,7 @@ public class MigrateManager {
         });
     }
 
-    private void getUuidFromWeb(Player player, Consumer<UUID> callback) {
+    private void getUuidFromWeb(OfflinePlayer player, Consumer<UUID> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(HypixelMigratorAddon.getPlugin(), () -> {
             try {
                 URL url = new URL("https://api.mojang.com/users/profiles/minecraft/" + player.getName());
@@ -95,5 +129,28 @@ public class MigrateManager {
                 e.printStackTrace();
             }
         });
+    }
+
+    public boolean isInChatList(Player player){
+        return migrateChat.contains(player.getUniqueId());
+    }
+    public void addPlayerChat(Player player){
+        if (isInChatList(player))
+            return;
+
+        if (isCooldownOver(player))
+            return;
+
+        migrateChat.add(player.getUniqueId());
+        addMigrateCoolDown(player);
+    }
+    public void removePlayerChat(Player player){
+        if (!isInChatList(player))
+            return;
+
+        if (!isCooldownOver(player))
+            return;
+
+        migrateChat.remove(player.getUniqueId());
     }
 }

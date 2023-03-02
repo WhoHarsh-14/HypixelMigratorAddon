@@ -10,7 +10,7 @@ public class HypixelMigratorPluginAddon extends BedwarsAddon {
 
     @Override
     public String getName() {
-        return "Hypixel Migrator Addon";
+        return "HypixelMigratorAddon";
     }
 }
 
