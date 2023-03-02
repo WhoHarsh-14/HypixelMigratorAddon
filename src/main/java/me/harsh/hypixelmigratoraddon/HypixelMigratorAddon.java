@@ -1,5 +1,8 @@
 package me.harsh.hypixelmigratoraddon;
 
+import de.marcely.bedwars.api.BedwarsAPI;
+import de.marcely.bedwars.api.BedwarsAddon;
+import de.marcely.bedwars.api.command.SubCommand;
 import me.harsh.hypixelmigratoraddon.commands.MigrateCommand;
 import me.harsh.hypixelmigratoraddon.config.Config;
 import me.harsh.hypixelmigratoraddon.listeners.ShopListener;
@@ -10,6 +13,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class HypixelMigratorAddon extends JavaPlugin {
 
     private static HypixelMigratorAddon plugin;
+    private static BedwarsAddon addon;
+
     @Override
     public void onEnable() {
         plugin = this;
@@ -17,17 +22,28 @@ public class HypixelMigratorAddon extends JavaPlugin {
         Utils.log("&a" + getPlugin().getName() + " has enabled!");
         registerEverything();
         new Metrics(this, 17834);
-        new HypixelMigratorPluginAddon(this).register();
+        final BedwarsAddon addon = new HypixelMigratorPluginAddon(this);
+        BedwarsAPI.onReady(addon::register);
+        HypixelMigratorAddon.addon = addon;
+        final SubCommand cmd = addon.getCommandsRoot().addCommand("migrator");
+
+        cmd.setAliases("migrator");
+        cmd.setUsage("<player_name>");
+        cmd.setOnlyForPlayers(true);
+        cmd.setHandler(new MigrateCommand());
     }
 
 
     private void registerEverything(){
         this.getServer().getPluginManager().registerEvents(new ShopListener(), this);
-        this.getCommand("migrate").setExecutor(new MigrateCommand());
         Utils.setManager(new MigrateManager());
     }
 
     public static HypixelMigratorAddon getPlugin() {
         return plugin;
+    }
+
+    public static BedwarsAddon getAddon() {
+        return addon;
     }
 }

@@ -2,10 +2,14 @@ package me.harsh.hypixelmigratoraddon.config;
 
 import me.harsh.hypixelmigratoraddon.HypixelMigratorAddon;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public class Config {
+    private static FileConfiguration config;
     public static Boolean ONLINE_MODE;
     public static String HYPIXEL_API;
     public static int DELAY;
@@ -24,8 +28,10 @@ public class Config {
     public static String CHAT_MIGRATE;
     public static String QUICK_SHOP_ITEM;
 
-    public static void load(){
-        HypixelMigratorAddon.getPlugin().saveDefaultConfig();
+    public static void load() throws IOException {
+        final File file = new File(HypixelMigratorAddon.getAddon().getDataFolder(), "config.yml");
+        config = YamlConfiguration.loadConfiguration(file);
+        config.save(file);
         loadVars();
     }
 
@@ -34,7 +40,7 @@ public class Config {
         loadVars();
     }
     public static FileConfiguration get(){
-        return HypixelMigratorAddon.getPlugin().getConfig();
+        return config;
     }
 
     private static void loadVars(){

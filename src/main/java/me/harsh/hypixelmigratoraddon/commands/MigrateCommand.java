@@ -1,50 +1,62 @@
 package me.harsh.hypixelmigratoraddon.commands;
 
+import de.marcely.bedwars.api.command.CommandHandler;
+import de.marcely.bedwars.api.command.SubCommand;
+import de.marcely.bedwars.libraries.org.jetbrains.annotations.Nullable;
+import me.harsh.hypixelmigratoraddon.HypixelMigratorAddon;
 import me.harsh.hypixelmigratoraddon.config.Config;
 import me.harsh.hypixelmigratoraddon.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MigrateCommand implements TabExecutor {
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player){
-            final Player player = (Player) sender;
-            if (args.length == 1){
-                if (args[0].equals("reload")) {
-                    if (!player.hasPermission("migrator.admin")) return false;
-                    Config.reload();
-                    Utils.tell(player, "&a&lReloaded successfully!");
-                }else if (args[0].equalsIgnoreCase("migrate")){
-                    if (!player.hasPermission("migrator.use")) return false;
-                    Utils.getManager().addPlayerChat(player);
-                    Utils.tell(player, Config.CHAT_MIGRATE);
-                }
+public class MigrateCommand implements CommandHandler {
 
-            }else if (args.length == 2){
-                if (args[0].equalsIgnoreCase("migrate")){
-                    if (!player.hasPermission("migrator.use")) return false;
-                    final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[1]);
-                    if (offlinePlayer == null) return false;
-                    Utils.getManager().migrateFromChat(offlinePlayer, player);
-                }
-            }
-        }
-        return true;
+    @Override
+    public Plugin getPlugin() {
+        return HypixelMigratorAddon.getPlugin();
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    public void onRegister(SubCommand subCommand) {
+
+    }
+
+    @Override
+    public void onFire(CommandSender commandSender, String s, String[] strings) {
+        final Player player = (Player) commandSender;
+        if (strings.length == 1){
+            if (strings[0].equals("reload")) {
+                if (!player.hasPermission("migrator.admin")) return;
+                Config.reload();
+                Utils.tell(player, "&a&lReloaded successfully!");
+            }else if (strings[0].equalsIgnoreCase("migrate")){
+                if (!player.hasPermission("migrator.use")) return;
+                Utils.getManager().addPlayerChat(player);
+                Utils.tell(player, Config.CHAT_MIGRATE);
+            }
+
+        }else if (strings.length == 2){
+            if (strings[0].equalsIgnoreCase("migrate")){
+                if (!player.hasPermission("migrator.use")) return;
+                final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(strings[1]);
+                if (offlinePlayer == null) return;
+                Utils.getManager().migrateFromChat(offlinePlayer, player);
+            }
+        }
+
+    }
+
+    @Override
+    public @Nullable List<String> onAutocomplete(CommandSender commandSender, String[] strings) {
         final List<String> toComplete = new ArrayList<>();
 
-        switch (args.length){
+        switch (strings.length){
             case 1:
                 toComplete.add("reload");
                 toComplete.add("migrate");
