@@ -1,5 +1,7 @@
 package me.harsh.hypixelmigratoraddon;
 
+import de.marcely.bedwars.api.BedwarsAddon;
+import de.marcely.bedwars.api.command.SubCommand;
 import me.harsh.hypixelmigratoraddon.commands.MigrateCommand;
 import me.harsh.hypixelmigratoraddon.config.Config;
 import me.harsh.hypixelmigratoraddon.listeners.ShopListener;
@@ -18,13 +20,19 @@ public class HypixelMigratorPlugin extends JavaPlugin {
         Utils.log("&a" + getPlugin().getName() + " has enabled!");
         registerEverything();
         new Metrics(this, 17834);
-        new HypixelMigratorAddon(this).register();
+        BedwarsAddon addon = new HypixelMigratorAddon(this);
+        addon.register();
+        if (!addon.isRegistered()) return;
+        final SubCommand cmd = addon.getCommandsRoot().addCommand("migrator");
+        cmd.setAliases("migrator");
+        cmd.setUsage("<player_name>");
+        cmd.setOnlyForPlayers(true);
+        cmd.setHandler(new MigrateCommand());
     }
 
 
     private void registerEverything(){
         this.getServer().getPluginManager().registerEvents(new ShopListener(), this);
-        this.getCommand("migrate").setExecutor(new MigrateCommand());
         Utils.setManager(new MigrateManager());
     }
 

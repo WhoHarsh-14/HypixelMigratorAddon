@@ -2,8 +2,7 @@ package me.harsh.hypixelmigratoraddon.commands;
 
 import de.marcely.bedwars.api.command.CommandHandler;
 import de.marcely.bedwars.api.command.SubCommand;
-import de.marcely.bedwars.libraries.org.jetbrains.annotations.Nullable;
-import me.harsh.hypixelmigratoraddon.HypixelMigratorAddon;
+import me.harsh.hypixelmigratoraddon.HypixelMigratorPlugin;
 import me.harsh.hypixelmigratoraddon.config.Config;
 import me.harsh.hypixelmigratoraddon.utils.Utils;
 import org.bukkit.Bukkit;
@@ -19,7 +18,7 @@ public class MigrateCommand implements CommandHandler {
 
     @Override
     public Plugin getPlugin() {
-        return HypixelMigratorAddon.getPlugin();
+        return HypixelMigratorPlugin.getPlugin();
     }
 
     @Override
@@ -53,7 +52,7 @@ public class MigrateCommand implements CommandHandler {
     }
 
     @Override
-    public @Nullable List<String> onAutocomplete(CommandSender commandSender, String[] strings) {
+    public List<String> onAutocomplete(CommandSender commandSender, String[] strings) {
         final List<String> toComplete = new ArrayList<>();
 
         switch (strings.length){
