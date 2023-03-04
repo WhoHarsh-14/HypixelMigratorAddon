@@ -2,9 +2,10 @@ package me.harsh.hypixelmigratoraddon.manager;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import de.marcely.bedwars.api.GameAPI;
 import de.marcely.bedwars.api.game.shop.ShopItem;
 import de.marcely.bedwars.api.player.PlayerDataAPI;
-import me.harsh.hypixelmigratoraddon.HypixelMigratorAddon;
+import me.harsh.hypixelmigratoraddon.HypixelMigratorPlugin;
 import me.harsh.hypixelmigratoraddon.config.Config;
 import me.harsh.hypixelmigratoraddon.utils.Utils;
 import org.bukkit.Bukkit;
@@ -16,64 +17,56 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
 public class MigrateManager {
 
-    private final HashMap<UUID, Long> migrateCoolDown = new HashMap<>();
+    private final List<Player> migrateCoolDown = new ArrayList<>();
     private final List<UUID> migrateChat = new ArrayList<>();
+
     public void migratePlayerLayout(Player player) {
         if (Config.ONLINE_MODE) {
-            applyPlayerMigratedLayout(player, player.getUniqueId());
+            applyPlayerMigratedLayout(player, player.getUniqueId(), true);
         } else {
             getUuidFromWeb(player, uuid -> {
                 if (uuid == null) {
                     Utils.tell(player, Config.NOT_PREMIUM_USER);
                 } else {
-                    applyPlayerMigratedLayout(player, uuid);
+                    applyPlayerMigratedLayout(player, uuid, true);
                 }
             });
         }
     }
+
     public void migrateFromChat(OfflinePlayer p, Player player) {
         getUuidFromWeb(p, uuid -> {
             if (uuid == null) {
                 Utils.tell(player, Config.NOT_PREMIUM_USER);
             } else {
-                applyPlayerMigratedLayout(player, uuid);
+                applyPlayerMigratedLayout(player, uuid, false);
             }
         });
     }
 
-
-    public HashMap<UUID, Long> getMigrateCoolDown() {
-        return migrateCoolDown;
-    }
     public boolean isCooldownOver(Player player) {
-        if (!getMigrateCoolDown().containsKey(player.getUniqueId())) return false;
-        return System.currentTimeMillis() >= getMigrateCoolDown().get(player.getUniqueId());
+        return !migrateCoolDown.contains(player);
     }
 
     public void addMigrateCoolDown(Player player){
-        if (!getMigrateCoolDown().containsKey(player.getUniqueId())) return;
-        migrateCoolDown.put(player.getUniqueId(), System.currentTimeMillis() + (1000L *Config.DELAY));
+        migrateCoolDown.add(player);
+        Bukkit.getScheduler().runTaskLater(HypixelMigratorPlugin.getPlugin(), () -> migrateCoolDown.remove(player), 20L * Config.DELAY);
     }
 
-    public void removeMigrateCoolDown(Player player){
-        if (!isCooldownOver(player)) return;
-        getMigrateCoolDown().remove(player.getUniqueId());
-    }
-
-    private void applyPlayerMigratedLayout(Player player, UUID uuid) {
+    private void applyPlayerMigratedLayout(Player player, UUID uuid, boolean refreshGUI) {
         Utils.tell(player, Config.MIGRATION_STARTED);
         getHypixelTemplate(uuid, response -> {
             if (response == null) {
                 Utils.tell(player, Config.NOT_PREMIUM_USER);
                 return;
             }
+
             if (response.get("player").isJsonNull()) {
                 Utils.tell(player, Config.MIGRATION_FAILED);
                 return;
@@ -83,13 +76,16 @@ public class MigrateManager {
             ShopItem[] shopItems = Utils.getAllShopItems(items);
             PlayerDataAPI.get().getProperties(player, playerProperties -> {
                 playerProperties.setShopHypixelV2QuickBuyItems(shopItems);
+                Utils.tell(player, Config.MIGRATION_SUCCESS);
+
+                if(refreshGUI)
+                    GameAPI.get().openShop(player); // re-open quick buy
             });
-            Utils.tell(player, Config.MIGRATION_SUCCESS);
         });
     }
 
     private void getHypixelTemplate(UUID uuid, Consumer<JsonObject> response) {
-        Bukkit.getScheduler().runTaskAsynchronously(HypixelMigratorAddon.getPlugin(), () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(HypixelMigratorPlugin.getPlugin(), () -> {
             try {
                 final URL hypixelApi = new URL(String.format("https://api.hypixel.net/player?key=%s&uuid=%s", Config.HYPIXEL_API, uuid.toString()));
                 final HttpURLConnection httpURLConnection = (HttpURLConnection)hypixelApi.openConnection();
@@ -110,7 +106,7 @@ public class MigrateManager {
     }
 
     private void getUuidFromWeb(OfflinePlayer player, Consumer<UUID> callback) {
-        Bukkit.getScheduler().runTaskAsynchronously(HypixelMigratorAddon.getPlugin(), () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(HypixelMigratorPlugin.getPlugin(), () -> {
             try {
                 URL url = new URL("https://api.mojang.com/users/profiles/minecraft/" + player.getName());
                 HttpURLConnection connection = (HttpURLConnection)url.openConnection();
@@ -134,6 +130,7 @@ public class MigrateManager {
     public boolean isInChatList(Player player){
         return migrateChat.contains(player.getUniqueId());
     }
+
     public void addPlayerChat(Player player){
         if (isInChatList(player))
             return;
@@ -144,6 +141,7 @@ public class MigrateManager {
         migrateChat.add(player.getUniqueId());
         addMigrateCoolDown(player);
     }
+
     public void removePlayerChat(Player player){
         if (!isInChatList(player))
             return;
