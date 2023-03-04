@@ -20,33 +20,34 @@ public class ShopListener implements Listener {
 
     @EventHandler
     public void onOpen(ShopGUIPostProcessEvent event) {
-        if (event.getGUI() == null) return;
-        if (event.getPage() != null) return;
+        if (event.getGUI() == null || event.getPage() != null)
+            return;
+
         if (event.getGUI() instanceof ChestGUI) {
             final ChestGUI gui = (ChestGUI) event.getGUI();
-            if (gui == null) return;
-            final ItemStack item = Utils.getMigrateItem();
-            if (item == null){
-                Utils.log("[!] Config values for item are not set properly! migrate system wont work");
+
+            if (gui == null)
                 return;
-            }
+
+            final ItemStack item = Utils.getMigrateItem();
             final MigrateManager manager = Utils.getManager();
+
             gui.setItem(new GUIItem(item, (player, leftClick, b1) -> {
                 if (!player.hasPermission("migrator.use")){
                     Utils.tell(player, Config.MIGRATION_FAILED_NO_PERM);
                     event.getGUI().closeAll();
                     return;
                 }
-                if (manager.isCooldownOver(player))
-                    manager.removeMigrateCoolDown(player);
 
                 if (!manager.isCooldownOver(player)) {
                     Utils.tell(player, Config.MIGRATION_DELAYED);
                     return;
                 }
+
                 manager.migratePlayerLayout(player);
                 manager.addMigrateCoolDown(player);
             }), 49);
+
             event.getGUI().closeAll();
         }
     }
@@ -70,6 +71,4 @@ public class ShopListener implements Listener {
             manager.removePlayerChat(player);
         }
     }
-
-
 }

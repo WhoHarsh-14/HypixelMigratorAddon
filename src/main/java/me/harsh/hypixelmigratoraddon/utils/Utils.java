@@ -1,14 +1,12 @@
 package me.harsh.hypixelmigratoraddon.utils;
 
-
 import de.marcely.bedwars.api.GameAPI;
 import de.marcely.bedwars.api.game.shop.ShopItem;
 import de.marcely.bedwars.api.game.shop.ShopPage;
-import de.marcely.bedwars.libraries.com.cryptomorin.xseries.XMaterial;
-import me.harsh.hypixelmigratoraddon.HypixelMigratorAddon;
+import de.marcely.bedwars.tools.NMSHelper;
+import me.harsh.hypixelmigratoraddon.HypixelMigratorPlugin;
 import me.harsh.hypixelmigratoraddon.config.Config;
 import me.harsh.hypixelmigratoraddon.manager.MigrateManager;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -22,7 +20,6 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class Utils {
     private static MigrateManager manager;
@@ -36,36 +33,40 @@ public class Utils {
     }
 
     public static void log(String message){
-        HypixelMigratorAddon.getPlugin().getServer().getLogger().info(ChatColor.translateAlternateColorCodes('&', message));
+        HypixelMigratorPlugin.getPlugin().getServer().getLogger().info(ChatColor.translateAlternateColorCodes('&', message));
     }
 
     public static ItemStack getMigrateItem(){
-        Optional<XMaterial> xMaterial = XMaterial.matchXMaterial(Config.MIGRATE_ITEM_ICON);
-        if (!xMaterial.isPresent()) return null;
-        final ItemStack item = xMaterial.get().parseItem();
-        if (item == null) return null;
+        final ItemStack item = new ItemStack(Config.MIGRATE_ITEM_ICON);
         final ItemMeta migrateItemMeta = item.getItemMeta();
+
         migrateItemMeta.setDisplayName(colorize(Config.MIGRATE_ITEM_NAME));
         migrateItemMeta.setLore(colorize(Config.MIGRATE_ITEM_LORE));
         item.setItemMeta(migrateItemMeta);
         item.setAmount(1);
+
         if (Config.MIGRATE_ITEM_IS_HEAD) {
             final SkullMeta skull = (SkullMeta) item.getItemMeta();
-            String version = Bukkit.getBukkitVersion().split("-")[0];
-            if (version.contains("1.8")) {
+
+            if (NMSHelper.get().getVersion() == 8) {
                 skull.setOwner(Config.MIGRATE_HEAD_SKIN);
                 item.setItemMeta(skull);
                 return item;
             }
-            skull.setOwningPlayer(Bukkit.getOfflinePlayer(Config.MIGRATE_HEAD_SKIN));
+
+            // NOTE: this method does not exist on 1.8.8
+            // skull.setOwningPlayer(Bukkit.getOfflinePlayer(Config.MIGRATE_HEAD_SKIN));
             item.setItemMeta(skull);
+
             return item;
         }
         return item;
     }
+
     public static String colorize(String msg){
         return ChatColor.translateAlternateColorCodes('&', msg);
     }
+
     public static List<String> colorize(List<String> msg){
         final List<String> colored = new ArrayList<>();
         for (String s : msg) {
@@ -126,6 +127,7 @@ public class Utils {
 
         return null;
     }
+
     private static ShopItem checkPotion(ItemStack icon, ShopItem item, PotionEffectType type) {
         if (icon.getType() != Material.POTION) return null;
         final PotionMeta meta = (PotionMeta) icon.getItemMeta();
@@ -160,12 +162,13 @@ public class Utils {
     public static ItemStack getBow(boolean power, boolean punch){
         final ItemStack itemStack = new ItemStack(Material.BOW);
         final ItemMeta meta = itemStack.getItemMeta();
+
         if (power)
             meta.addEnchant(Enchantment.ARROW_DAMAGE, 1, false);
         if (punch)
             meta.addEnchant(Enchantment.ARROW_KNOCKBACK, 1, false);
-        itemStack.setItemMeta(meta);
 
+        itemStack.setItemMeta(meta);
         return itemStack;
     }
 

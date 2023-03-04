@@ -1,22 +1,21 @@
 package me.harsh.hypixelmigratoraddon.config;
 
-import me.harsh.hypixelmigratoraddon.HypixelMigratorAddon;
+import de.marcely.bedwars.tools.Helper;
+import me.harsh.hypixelmigratoraddon.HypixelMigratorPlugin;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 public class Config {
-    private static FileConfiguration config;
     public static Boolean ONLINE_MODE;
     public static String HYPIXEL_API;
     public static int DELAY;
     public static String MIGRATE_ITEM_NAME;
     public static boolean MIGRATE_ITEM_IS_HEAD;
     public static String MIGRATE_HEAD_SKIN;
-    public static String MIGRATE_ITEM_ICON;
+    public static ItemStack MIGRATE_ITEM_ICON;
     public static List<String> MIGRATE_ITEM_LORE;
     public static String NOT_PREMIUM_USER;
     public static String MIGRATION_STARTED;
@@ -28,19 +27,18 @@ public class Config {
     public static String CHAT_MIGRATE;
     public static String QUICK_SHOP_ITEM;
 
-    public static void load() throws IOException {
-        final File file = new File(HypixelMigratorAddon.getAddon().getDataFolder(), "config.yml");
-        config = YamlConfiguration.loadConfiguration(file);
-        config.save(file);
+    public static void load(){
+        HypixelMigratorPlugin.getPlugin().saveDefaultConfig();
         loadVars();
     }
 
     public static void reload(){
-        HypixelMigratorAddon.getPlugin().reloadConfig();
+        HypixelMigratorPlugin.getPlugin().reloadConfig();
         loadVars();
     }
+
     public static FileConfiguration get(){
-        return config;
+        return HypixelMigratorPlugin.getPlugin().getConfig();
     }
 
     private static void loadVars(){
@@ -61,11 +59,17 @@ public class Config {
 
 
         // Item
-        final String icon = "Migrate-item.Item-icon";
-        MIGRATE_ITEM_ICON = get().getString(icon);
+        MIGRATE_ITEM_ICON = loadItemStack(get().getString("Migrate-item.Item-icon"));
         MIGRATE_ITEM_IS_HEAD = get().getBoolean("Migrate-item.player-head");
         MIGRATE_HEAD_SKIN = get().getString("Migrate-item.player-head-skin");
         MIGRATE_ITEM_NAME = get().getString("Migrate-item.Item-name");
         MIGRATE_ITEM_LORE = get().getStringList("Migrate-item.Lore");
+    }
+
+    // Tries to parse the item using thw config string. Returns stone if it fails
+    private static ItemStack loadItemStack(String configItem){
+        final ItemStack is = configItem != null ? Helper.get().parseItemStack(configItem) : null;
+
+        return is != null ? is : new ItemStack(Material.STONE);
     }
 }
