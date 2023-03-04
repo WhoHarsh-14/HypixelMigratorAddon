@@ -1,6 +1,6 @@
 name: HypixelMigratorAddon
 version: '${project.version}'
-main: me.harsh.hypixelmigratoraddon.HypixelMigratorAddon
+main: me.harsh.hypixelmigratoraddon.HypixelMigratorPlugin
 api-version: 1.13
 commands:
   migrate:

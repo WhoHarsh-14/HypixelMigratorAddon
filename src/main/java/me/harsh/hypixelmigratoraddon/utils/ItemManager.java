@@ -1,19 +1,19 @@
 package me.harsh.hypixelmigratoraddon.utils;
 
-import de.marcely.bedwars.libraries.com.cryptomorin.xseries.XMaterial;
+import de.marcely.bedwars.tools.Helper;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 
-
 public enum ItemManager {
-    WOOL("wool", XMaterial.WHITE_WOOL.parseItem()),
-    CLAY( "hardened_clay", XMaterial.TERRACOTTA.parseItem()),
+
+    WOOL("wool", Helper.get().parseItemStack("WOOL")),
+    CLAY( "hardened_clay", Helper.get().parseItemStack("TERRACOTTA")),
     GLASS("blast-proof_glass", new ItemStack(Material.GLASS)),
     END_STONE( "end_stone", null),
     LADDER("ladder", null),
-    WOOD("oak_wood_planks", XMaterial.OAK_PLANKS.parseItem()),
+    WOOD("oak_wood_planks", Helper.get().parseItemStack("OAK_PLANKS")),
     OBSIDIAN("obsidian", null),
     STONE_SWORD("stone_sword", null),
     IRON_SWORD("iron_sword", null),
@@ -34,13 +34,13 @@ public enum ItemManager {
     INVISIBILITY_POTION("invisibility_potion_(30_seconds)", Utils.getPotion("invis")),
     GOLDEN_APPLE("golden_apple", null),
     BEDBUG("bedbug", null),
-    DREAM_DEFENDER("dream_defender", XMaterial.GHAST_SPAWN_EGG.parseItem()),
-    FIREBALL("fireball", XMaterial.FIRE_CHARGE.parseItem()),
+    DREAM_DEFENDER("dream_defender", Helper.get().parseItemStack("GHAST_SPAWN_EGG")),
+    FIREBALL("fireball", Helper.get().parseItemStack("FIRE_CHARGE")),
     TNT("tnt", null),
     ENDER_PEARL("ender_pearl", null),
     WATER_BUCKET("water_bucket", null),
-    BRIDGE_EGG("bridge_egg", XMaterial.EGG.parseItem()),
-    MAGIC_MILK("magic_milk", XMaterial.MILK_BUCKET.parseItem()),
+    BRIDGE_EGG("bridge_egg", Helper.get().parseItemStack("EGG")),
+    MAGIC_MILK("magic_milk", Helper.get().parseItemStack("MILK_BUCKET")),
     SPONGE("sponge", null),
     POPUP_TOWER("compact_pop-up_tower", new ItemStack(Material.CHEST));
 
@@ -51,6 +51,7 @@ public enum ItemManager {
 
     private final String materialName;
     private final ItemStack privateItem;
+
     public String getMaterialName() {
         return this.materialName;
     }
@@ -59,11 +60,6 @@ public enum ItemManager {
         return privateItem;
     }
 
-    public Material getMaterial() {
-        if (privateItem == null)
-            return Material.matchMaterial(materialName);
-        return getPrivateItem().getType();
-    }
     public ItemStack getItem() {
         if (privateItem == null) {
             if (Material.matchMaterial(materialName) == null)
