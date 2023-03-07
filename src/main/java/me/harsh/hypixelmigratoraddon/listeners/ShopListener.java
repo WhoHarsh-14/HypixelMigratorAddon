@@ -1,7 +1,5 @@
 package me.harsh.hypixelmigratoraddon.listeners;
 
-import de.marcely.bedwars.api.GameAPI;
-import de.marcely.bedwars.api.arena.Arena;
 import de.marcely.bedwars.api.event.ShopGUIPostProcessEvent;
 import de.marcely.bedwars.tools.gui.GUIItem;
 import de.marcely.bedwars.tools.gui.type.ChestGUI;
@@ -55,13 +53,7 @@ public class ShopListener implements Listener {
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event){
         final Player player = event.getPlayer();
-        final Arena arena = GameAPI.get().getArenaByPlayer(player);
-        if (arena == null){
-            Utils.tell(player, "&cNot in arena");
-            return;
-        }
         final MigrateManager manager = Utils.getManager();
-
         if (manager.isInChatList(player)){
             final String playerName = event.getMessage().split(" ")[0];
             if (playerName == null) return;
