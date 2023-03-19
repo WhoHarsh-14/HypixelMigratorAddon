@@ -11,6 +11,7 @@ import java.util.List;
 public class Config {
     public static Boolean ONLINE_MODE;
     public static String HYPIXEL_API;
+    public static boolean CLOSE_GUI;
     public static int DELAY;
     public static String MIGRATE_ITEM_NAME;
     public static boolean MIGRATE_ITEM_IS_HEAD;
@@ -46,6 +47,7 @@ public class Config {
         HYPIXEL_API = get().getString("Hypixel-api");
         DELAY = get().getInt("Delay");
         PREFIX = get().getString("Prefix");
+        CLOSE_GUI = get().getBoolean("Close-shop-on-migrate");
         QUICK_SHOP_ITEM = get().getString("Quick-shop-item");
 
         // Messages

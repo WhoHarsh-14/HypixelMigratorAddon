@@ -18,22 +18,20 @@ public class ShopListener implements Listener {
 
     @EventHandler
     public void onOpen(ShopGUIPostProcessEvent event) {
-        if (event.getGUI() == null || event.getPage() != null)
-            return;
+        if (event.getPage() != null) return;
 
         if (event.getGUI() instanceof ChestGUI) {
             final ChestGUI gui = (ChestGUI) event.getGUI();
 
-            if (gui == null)
-                return;
+            if (gui == null) return;
 
             final ItemStack item = Utils.getMigrateItem();
             final MigrateManager manager = Utils.getManager();
 
             gui.setItem(new GUIItem(item, (player, leftClick, b1) -> {
-                if (!player.hasPermission("migrator.use")){
+                if (!player.hasPermission("migrator.use")) {
                     Utils.tell(player, Config.MIGRATION_FAILED_NO_PERM);
-                    event.getGUI().closeAll();
+                    if (Config.CLOSE_GUI) event.getGUI().closeAll();
                     return;
                 }
 
@@ -44,6 +42,7 @@ public class ShopListener implements Listener {
 
                 manager.migratePlayerLayout(player);
                 manager.addMigrateCoolDown(player);
+                if (Config.CLOSE_GUI) event.getGUI().closeAll();
             }), 49);
 
             event.getGUI().closeAll();
@@ -51,10 +50,10 @@ public class ShopListener implements Listener {
     }
 
     @EventHandler
-    public void onChat(AsyncPlayerChatEvent event){
+    public void onChat(AsyncPlayerChatEvent event) {
         final Player player = event.getPlayer();
         final MigrateManager manager = Utils.getManager();
-        if (manager.isInChatList(player)){
+        if (manager.isInChatList(player)) {
             final String playerName = event.getMessage().split(" ")[0];
             if (playerName == null) return;
             final OfflinePlayer p = Bukkit.getOfflinePlayer(playerName);

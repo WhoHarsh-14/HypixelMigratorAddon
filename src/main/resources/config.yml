@@ -5,6 +5,8 @@ Hypixel-api: ""
 online-mode: true
 # Time in seconds
 Delay: 15
+# Closes the shop GUI on clicking the migrate button!
+Close-shop-on-migrate: true
 
 Prefix: "&c[&aYourServerName&c]"
 
