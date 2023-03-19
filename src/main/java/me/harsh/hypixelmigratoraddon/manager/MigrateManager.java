@@ -17,13 +17,14 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
 public class MigrateManager {
 
-    private final List<Player> migrateCoolDown = new ArrayList<>();
+    private final HashMap<UUID, Long> migrateCoolDownMap = new HashMap<>();
     private final List<UUID> migrateChat = new ArrayList<>();
 
     public void migratePlayerLayout(Player player) {
@@ -51,12 +52,31 @@ public class MigrateManager {
     }
 
     public boolean isCooldownOver(Player player) {
-        return !migrateCoolDown.contains(player);
+        if (migrateCoolDownMap.containsKey(player.getUniqueId())){
+            if (migrateCoolDownMap.get(player.getUniqueId()) <= System.currentTimeMillis()){
+                migrateCoolDownMap.remove(player.getUniqueId());
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
+    private boolean isInCooldownMap(Player player){
+        return migrateCoolDownMap.containsKey(player.getUniqueId());
+    }
+    public long timeLeft(Player player){
+        if (isInCooldownMap(player)){
+            if (migrateCoolDownMap.get(player.getUniqueId()) > System.currentTimeMillis()){
+                return migrateCoolDownMap.get(player.getUniqueId()) - System.currentTimeMillis();
+            }
+        }else return -1;
+
+        return 0;
     }
 
     public void addMigrateCoolDown(Player player){
-        migrateCoolDown.add(player);
-        Bukkit.getScheduler().runTaskLater(HypixelMigratorPlugin.getPlugin(), () -> migrateCoolDown.remove(player), 20L * Config.DELAY);
+        if (migrateCoolDownMap.containsKey(player.getUniqueId())) return;
+        migrateCoolDownMap.put(player.getUniqueId(), System.currentTimeMillis() + Config.DELAY * 1000L);
     }
 
     private void applyPlayerMigratedLayout(Player player, UUID uuid, boolean refreshGUI) {

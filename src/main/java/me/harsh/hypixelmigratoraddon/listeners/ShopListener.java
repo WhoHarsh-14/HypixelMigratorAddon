@@ -36,7 +36,8 @@ public class ShopListener implements Listener {
                 }
 
                 if (!manager.isCooldownOver(player)) {
-                    Utils.tell(player, Config.MIGRATION_DELAYED);
+                    Utils.tell(player, Config.MIGRATION_DELAYED
+                            .replace("{time}", "" +manager.timeLeft(player)));
                     return;
                 }
 
